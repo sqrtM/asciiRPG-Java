@@ -5,7 +5,7 @@ import asciiPanel.AsciiPanel;
 
 public class StartScreen implements Screen {
     public void displayOutput(AsciiPanel terminal) {
-        terminal.write("rl tuto", 1, 1);
+        terminal.write("java rl by mason", 1, 1);
         terminal.writeCenter("-- press [enter] to start", 22);
     }
 

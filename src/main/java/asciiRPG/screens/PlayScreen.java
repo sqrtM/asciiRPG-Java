@@ -1,7 +1,10 @@
 package asciiRPG.screens;
 
 import java.awt.event.KeyEvent;
+
 import asciiPanel.AsciiPanel;
+import asciiRPG.entity.Character;
+import asciiRPG.Tile;
 import asciiRPG.World;
 import asciiRPG.WorldBuilder;
 
@@ -11,22 +14,29 @@ public class PlayScreen implements Screen {
     private int centerY;
     private int screenWidth;
     private int screenHeight;
+    private Character player;
 
     public PlayScreen(){
         screenWidth = 80;
-        screenHeight = 21;
+        screenHeight = 45;
         createWorld();
     }
 
+    // this is being called every time the screen changes to the play screen??
     private void createWorld(){
-        world = new WorldBuilder(90, 32)
+        world = new WorldBuilder(500, 500)
                 .makeCaves()
                 .build();
+        player = new Character();
     }
 
     public int getScrollX() { return Math.max(0, Math.min(centerX - screenWidth / 2, world.getWidth() - screenWidth)); }
 
     public int getScrollY() { return Math.max(0, Math.min(centerY - screenHeight / 2, world.getHeight() - screenHeight)); }
+
+    private String getTileInfoString(Tile tile) {
+        return tile.getName() + " " + tile.getGlyph();
+    }
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
@@ -36,9 +46,21 @@ public class PlayScreen implements Screen {
 
         displayTiles(terminal, left, top);
 
-        terminal.write('X', centerX - left, centerY - top);
+        terminal.write(player.getGlyph(), centerX - left, centerY - top);
 
-        terminal.writeCenter("-- press [escape] to lose or [enter] to win --", 22);
+        terminal.writeCenter("-- press [escape] to lose or [enter] to win --", screenHeight + 1);
+
+        terminal.write("turn : " + world.getTime(), screenWidth + 1, 0);
+        terminal.write(player.getName(), screenWidth + 1, 2);
+        terminal.write(player.getTitle(), screenWidth + 1, 3);
+
+        terminal.write((char) 0xE0 + " " + "[-----]", screenWidth + 1, 5);
+        terminal.write((char) 0xE1 + " " + "[-----]", screenWidth + 1, 6);
+        terminal.write((char) 0xE2 + " " + "[-----]", screenWidth + 1, 7);
+        terminal.write((char) 0xE3 + " " + "[-----]", screenWidth + 1, 8);
+
+        terminal.write(getTileInfoString(world.getTiles()[centerX][centerY]), screenWidth + 1, 10, world.getTiles()[centerX][centerY].getColor());
+
     }
 
     private void displayTiles(AsciiPanel terminal, int left, int top) {
@@ -46,34 +68,39 @@ public class PlayScreen implements Screen {
             for (int y = 0; y < screenHeight; y++){
                 int wx = x + left;
                 int wy = y + top;
-
-                terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy));
+                if (world.getTiles()[wx][wy].getContains().size() != 0) {
+                    terminal.write(world.getTiles()[wx][wy].getContains().get(0).getGlyph(), x, y);
+                    System.out.println(world.getTiles()[wx][wy].getContains().get(0).getGlyph());
+                } else {
+                    terminal.write(world.getGlyph(wx, wy), x, y, world.getColor(wx, wy));
+                }
             }
         }
     }
 
-    private void scrollBy(int mx, int my){
+    private void scrollBy(int mx, int my) {
+        world.setTime(Math.round((world.getTime() + world.getTiles()[centerX][centerY].getSpeedMod()) * 100) / 100d);
         centerX = Math.max(0, Math.min(centerX + mx, world.getWidth() - 1));
         centerY = Math.max(0, Math.min(centerY + my, world.getHeight() - 1));
     }
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-        switch (key.getKeyCode()){
-            case KeyEvent.VK_ESCAPE: return new LoseScreen();
-            case KeyEvent.VK_ENTER: return new WinScreen();
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_H: scrollBy(-1, 0); break;
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_L: scrollBy( 1, 0); break;
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_K: scrollBy( 0,-1); break;
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_J: scrollBy( 0, 1); break;
-            case KeyEvent.VK_Y: scrollBy(-1,-1); break;
-            case KeyEvent.VK_U: scrollBy( 1,-1); break;
-            case KeyEvent.VK_B: scrollBy(-1, 1); break;
-            case KeyEvent.VK_N: scrollBy( 1, 1); break;
+        switch (key.getKeyCode()) {
+            case KeyEvent.VK_ESCAPE -> {
+                return new LoseScreen();
+            }
+            case KeyEvent.VK_ENTER -> {
+                return new WinScreen();
+            }
+            case KeyEvent.VK_LEFT, KeyEvent.VK_H -> scrollBy(-1, 0);
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_L -> scrollBy(1, 0);
+            case KeyEvent.VK_UP, KeyEvent.VK_K -> scrollBy(0, -1);
+            case KeyEvent.VK_DOWN, KeyEvent.VK_J -> scrollBy(0, 1);
+            case KeyEvent.VK_Y -> scrollBy(-1, -1);
+            case KeyEvent.VK_U -> scrollBy(1, -1);
+            case KeyEvent.VK_B -> scrollBy(-1, 1);
+            case KeyEvent.VK_N -> scrollBy(1, 1);
         }
 
         return this;
