@@ -4,9 +4,11 @@ import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
 import asciiRPG.entity.Character;
-import asciiRPG.Tile;
-import asciiRPG.World;
-import asciiRPG.WorldBuilder;
+import asciiRPG.entity.Entity;
+import asciiRPG.entity.Predator;
+import asciiRPG.world.World;
+import asciiRPG.world.WorldBuilder;
+import asciiRPG.tiles.FloorTile;
 
 public class PlayScreen implements Screen {
     private World world;
@@ -34,7 +36,7 @@ public class PlayScreen implements Screen {
 
     public int getScrollY() { return Math.max(0, Math.min(centerY - screenHeight / 2, world.getHeight() - screenHeight)); }
 
-    private String getTileInfoString(Tile tile) {
+    private String getTileInfoString(FloorTile tile) {
         return tile.getName() + " " + tile.getGlyph();
     }
 
@@ -63,16 +65,28 @@ public class PlayScreen implements Screen {
 
     }
 
+    // for now, if it's not on screen, it's not real. it doesn't exist to us.
     private void displayTiles(AsciiPanel terminal, int left, int top) {
         for (int x = 0; x < screenWidth; x++){
             for (int y = 0; y < screenHeight; y++){
                 int wx = x + left;
                 int wy = y + top;
-                if (world.getTiles()[wx][wy].getContains().size() != 0) {
-                    terminal.write(world.getTiles()[wx][wy].getContains().get(0).getGlyph(), x, y);
-                    System.out.println(world.getTiles()[wx][wy].getContains().get(0).getGlyph());
-                } else {
+                if (world.getTiles()[wx][wy].getContains().size() == 0) {
                     terminal.write(world.getGlyph(wx, wy), x, y, world.getColor(wx, wy));
+                } else {
+                    // did the entity take a turn?
+                    if (world.getTiles()[wx][wy].getContains().get(0).takeTurn()) {
+                        // if so, get the new location...
+                        int newX = world.getTiles()[wx][wy].getContains().get(0).getLocation().getX();
+                        int newY = world.getTiles()[wx][wy].getContains().get(0).getLocation().getY();
+                        // move it to the new place...
+                        world.getTiles()[newX][newY].setContains(world.getTiles()[wx][wy].getContains().get(0));
+                        // remove it from the old.
+                        world.getTiles()[wx][wy].removeContents(0);
+                        terminal.write(world.getTiles()[newX][newY].getContains().get(0).getGlyph(), x, y);
+                    } else {
+                        terminal.write(world.getTiles()[wx][wy].getContains().get(0).getGlyph(), x, y);
+                    }
                 }
             }
         }
@@ -93,6 +107,8 @@ public class PlayScreen implements Screen {
             case KeyEvent.VK_ENTER -> {
                 return new WinScreen();
             }
+            // this SPACE one is just for now.. just for testing.
+            case KeyEvent.VK_SPACE -> scrollBy(0, 0);
             case KeyEvent.VK_LEFT, KeyEvent.VK_H -> scrollBy(-1, 0);
             case KeyEvent.VK_RIGHT, KeyEvent.VK_L -> scrollBy(1, 0);
             case KeyEvent.VK_UP, KeyEvent.VK_K -> scrollBy(0, -1);

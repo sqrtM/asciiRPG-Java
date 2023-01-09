@@ -1,4 +1,4 @@
-package asciiRPG;
+package asciiRPG.world;
 
 import java.util.Random;
 

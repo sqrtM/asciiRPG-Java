@@ -1,10 +1,14 @@
-package asciiRPG;
+package asciiRPG.world;
+
+import asciiRPG.tiles.Bounds;
+import asciiRPG.tiles.FloorTile;
+import asciiRPG.tiles.Tile;
 
 import java.awt.Color;
 
 public class World {
 
-    private Tile[][] tiles;
+    private FloorTile[][] tiles;
     private int width;
     private int height;
     private double time = 0;
@@ -25,7 +29,7 @@ public class World {
         return tile(x, y).getColor();
     }
 
-    public Tile[][] getTiles() {
+    public FloorTile[][] getTiles() {
         return tiles;
     }
 
@@ -37,7 +41,7 @@ public class World {
         this.time = time;
     }
 
-    public World(Tile[][] tiles) {
+    public World(FloorTile[][] tiles) {
         this.tiles = tiles;
         this.width = tiles.length;
         this.height = tiles[0].length;
@@ -45,7 +49,7 @@ public class World {
 
     public Tile tile(int x, int y){
         if (x < 0 || x >= width || y < 0 || y >= height)
-            return Tile.BOUNDS;
+            return new Bounds();
         else
             return tiles[x][y];
     }
