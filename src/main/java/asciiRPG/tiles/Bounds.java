@@ -46,8 +46,13 @@ public class Bounds extends FloorTile {
     }
 
     @Override
-    public void removeContents(int index) {
+    public void removeContents(Entity index) {
         this.contains.remove(index);
+    }
+
+    @Override
+    public double getSeed() {
+        return 0;
     }
 
 }

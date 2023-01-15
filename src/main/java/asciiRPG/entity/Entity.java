@@ -1,5 +1,7 @@
 package asciiRPG.entity;
 
+import asciiRPG.tiles.FloorTile;
+
 public abstract class Entity {
     char glyph = 'C';
     int health;
@@ -13,4 +15,6 @@ public abstract class Entity {
         return null;
     }
 
+    public void setTile(FloorTile floorTile) {
     }
+}

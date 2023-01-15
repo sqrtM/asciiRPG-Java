@@ -13,6 +13,15 @@ public class Water extends FloorTile {
     private final String name = "Water";
     private final Double speedMod = 4.0;
     private final ArrayList<Entity> contains = new ArrayList<>();
+    private final double seed;
+
+    public Water(double seed) {
+        this.seed = seed;
+    }
+
+    public double getSeed() {
+        return seed;
+    }
 
     @Override
     public char getGlyph() {
@@ -45,7 +54,7 @@ public class Water extends FloorTile {
     }
 
     @Override
-    public void removeContents(int index) {
+    public void removeContents(Entity index) {
         this.contains.remove(index);
     }
 }

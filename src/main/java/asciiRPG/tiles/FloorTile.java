@@ -19,5 +19,7 @@ public abstract class FloorTile implements Tile {
 
     public abstract void setContains(Entity item);
 
-    public abstract void removeContents(int index);
+    public abstract void removeContents(Entity index);
+
+    public abstract double getSeed();
 }

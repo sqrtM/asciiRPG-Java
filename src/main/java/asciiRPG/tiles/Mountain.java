@@ -14,6 +14,15 @@ public class Mountain extends FloorTile {
     private final String name = "Mountain";
     private final Double speedMod = 3.0;
     private final ArrayList<Entity> contains = new ArrayList<>();
+    private final double seed;
+
+    public Mountain(double seed) {
+        this.seed = seed;
+    }
+
+    public double getSeed() {
+        return seed;
+    }
 
     @Override
     public char getGlyph() {
@@ -46,7 +55,7 @@ public class Mountain extends FloorTile {
     }
 
     @Override
-    public void removeContents(int index) {
+    public void removeContents(Entity index) {
         this.contains.remove(index);
     }
 

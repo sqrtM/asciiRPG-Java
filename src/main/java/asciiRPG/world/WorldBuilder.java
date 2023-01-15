@@ -28,20 +28,20 @@ public class WorldBuilder {
             for (int y = 0; y < height; y++) {
                 double seed = noiseGenerator.noise(x, y);
                 if (seed < -0.1) {
-                    tiles[x][y] = new Water();
+                    tiles[x][y] = new Water(seed);
                 } else if (seed < 0.05) {
-                    tiles[x][y] = new Shore();
+                    tiles[x][y] = new Shore(seed);
                 } else if (seed < 0.3) {
-                    tiles[x][y] = new Floor();
+                    tiles[x][y] = new Floor(seed);
                     if (Math.random() < 0.01) {
-                        Predator predator = new Predator(x, y);
+                        Predator predator = new Predator(x, y, tiles[x][y]);
                         tiles[x][y].setContains(predator);
                         entities.add(predator);
                     }
                 } else if (seed < 0.6) {
-                    tiles[x][y] = new Slope();
+                    tiles[x][y] = new Slope(seed);
                 } else {
-                    tiles[x][y] = new Mountain();
+                    tiles[x][y] = new Mountain(seed);
                 }
             }
         }
