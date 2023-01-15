@@ -19,7 +19,8 @@ public class Predator extends Entity implements NPC {
     }
 
     public void setLocation(int x, int y) {
-        this.location = new Location(x, y);
+        this.location.setX(x);
+        this.location.setY(y);
     }
 
     public Location getLocation() {
@@ -58,7 +59,6 @@ public class Predator extends Entity implements NPC {
     Random rand = new Random();
     private void findNearbyWater() {
         int roll = rand.nextInt((4 - 1) + 1) + 1;
-        System.out.println(roll);
         if (getLocation().getX() > 1 && getLocation().getY() > 1) {
             switch (roll) {
                 case 1 -> setLocation(getLocation().getX() + 1, getLocation().getY());
@@ -70,19 +70,16 @@ public class Predator extends Entity implements NPC {
     }
 
     @Override
-    public Boolean takeTurn() {
+    public void takeTurn() {
         setHunger(this.hunger + 1);
         setThirst(this.thirst + 4);
         if (currentDesire == Desire.SOCIALIZE) {
             decideGoalForTurn();
         } else if (currentDesire == Desire.EAT) {
             // just for now
-            return false;
         } else if (currentDesire == Desire.DRINK) {
             findNearbyWater();
-            return true;
         }
-        return false;
     }
 
     @Override
@@ -90,7 +87,7 @@ public class Predator extends Entity implements NPC {
 
     }
 
-    public class Location {
+    public static class Location {
 
         public Location(int x, int y) {
             this.x = x;

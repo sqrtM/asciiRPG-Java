@@ -43,6 +43,8 @@ public class PlayScreen implements Screen {
     @Override
     public void displayOutput(AsciiPanel terminal) {
 
+        world.getEntities().forEach(Entity::takeTurn);
+
         int left = getScrollX();
         int top = getScrollY();
 
@@ -65,28 +67,23 @@ public class PlayScreen implements Screen {
 
     }
 
-    // for now, if it's not on screen, it's not real. it doesn't exist to us.
+    private void displayCreatures(AsciiPanel terminal, int wx, int wy, int x, int y) {
+        int newX = world.getTiles()[wx][wy].getContains().get(0).getLocation().getX();
+        int newY = world.getTiles()[wx][wy].getContains().get(0).getLocation().getY();
+        world.getTiles()[newX][newY].setContains(world.getTiles()[wx][wy].getContains().get(0));
+        world.getTiles()[wx][wy].removeContents(0);
+        terminal.write(world.getGlyph(wx, wy), x, y, world.getColor(wx, wy));
+        terminal.write(world.getTiles()[newX][newY].getContains().get(0).getGlyph(), x, y);
+    }
+
     private void displayTiles(AsciiPanel terminal, int left, int top) {
         for (int x = 0; x < screenWidth; x++){
             for (int y = 0; y < screenHeight; y++){
                 int wx = x + left;
                 int wy = y + top;
-                if (world.getTiles()[wx][wy].getContains().size() == 0) {
-                    terminal.write(world.getGlyph(wx, wy), x, y, world.getColor(wx, wy));
-                } else {
-                    // did the entity take a turn?
-                    if (world.getTiles()[wx][wy].getContains().get(0).takeTurn()) {
-                        // if so, get the new location...
-                        int newX = world.getTiles()[wx][wy].getContains().get(0).getLocation().getX();
-                        int newY = world.getTiles()[wx][wy].getContains().get(0).getLocation().getY();
-                        // move it to the new place...
-                        world.getTiles()[newX][newY].setContains(world.getTiles()[wx][wy].getContains().get(0));
-                        // remove it from the old.
-                        world.getTiles()[wx][wy].removeContents(0);
-                        terminal.write(world.getTiles()[newX][newY].getContains().get(0).getGlyph(), x, y);
-                    } else {
-                        terminal.write(world.getTiles()[wx][wy].getContains().get(0).getGlyph(), x, y);
-                    }
+                terminal.write(world.getGlyph(wx, wy), x, y, world.getColor(wx, wy));
+                if (world.getTiles()[wx][wy].getContains().size() != 0) {
+                    displayCreatures(terminal, wx, wy, x, y);
                 }
             }
         }
@@ -118,7 +115,6 @@ public class PlayScreen implements Screen {
             case KeyEvent.VK_B -> scrollBy(-1, 1);
             case KeyEvent.VK_N -> scrollBy(1, 1);
         }
-
         return this;
     }
 }

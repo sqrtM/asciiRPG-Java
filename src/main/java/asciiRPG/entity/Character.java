@@ -1,6 +1,6 @@
 package asciiRPG.entity;
 
-public class Character extends Entity {
+public class Character {
 
     private final String name = "sqrtM";
     private final String title = "unknown wanderer";

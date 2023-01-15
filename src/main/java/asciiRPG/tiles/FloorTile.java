@@ -2,9 +2,22 @@ package asciiRPG.tiles;
 
 import asciiRPG.entity.Entity;
 
-public interface FloorTile extends Tile {
+import java.awt.*;
+import java.util.ArrayList;
 
-    Double getSpeedMod();
-    void setContains(Entity item);
-    void removeContents(int index);
+public abstract class FloorTile implements Tile {
+
+    public abstract char getGlyph();
+
+    public abstract Color getColor();
+
+    public abstract String getName();
+
+    public abstract ArrayList<Entity> getContains();
+
+    public abstract Double getSpeedMod();
+
+    public abstract void setContains(Entity item);
+
+    public abstract void removeContents(int index);
 }

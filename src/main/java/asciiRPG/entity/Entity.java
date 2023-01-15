@@ -7,10 +7,7 @@ public abstract class Entity {
     public abstract char getGlyph();
     abstract int getHealth();
 
-    public Boolean takeTurn() {
-
-        return null;
-    }
+    public abstract void takeTurn();
 
     public Predator.Location getLocation() {
         return null;

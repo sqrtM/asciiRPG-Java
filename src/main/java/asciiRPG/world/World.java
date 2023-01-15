@@ -1,10 +1,12 @@
 package asciiRPG.world;
 
+import asciiRPG.entity.Entity;
 import asciiRPG.tiles.Bounds;
 import asciiRPG.tiles.FloorTile;
 import asciiRPG.tiles.Tile;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class World {
 
@@ -12,6 +14,7 @@ public class World {
     private int width;
     private int height;
     private double time = 0;
+    private final ArrayList<Entity> entities;
 
     public int getWidth(){
         return width;
@@ -41,10 +44,20 @@ public class World {
         this.time = time;
     }
 
-    public World(FloorTile[][] tiles) {
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(Entity entities) {
+        this.entities.add(entities);
+    }
+
+    public World(FloorTile[][] tiles, ArrayList<Entity> entities) {
         this.tiles = tiles;
         this.width = tiles.length;
         this.height = tiles[0].length;
+
+        this.entities = entities;
     }
 
     public Tile tile(int x, int y){

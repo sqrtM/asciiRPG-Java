@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static asciiPanel.AsciiPanel.brightBlack;
 
-public class Bounds implements FloorTile {
+public class Bounds extends FloorTile {
 
     private final char glyph = 'X';
     private final Color color = brightBlack;
@@ -15,32 +15,39 @@ public class Bounds implements FloorTile {
     private final Double speedMod = 0.0;
     private final ArrayList<Entity> contains = new ArrayList<>();
 
-
+    @Override
     public char getGlyph() {
         return this.glyph;
     }
 
+    @Override
     public Color getColor() {
         return this.color;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
-    public Double getSpeedMod() {
-        return this.speedMod;
-    }
-
+    @Override
     public ArrayList<Entity> getContains() {
         return this.contains;
     }
 
+    @Override
+    public Double getSpeedMod() {
+        return this.speedMod;
+    }
+
+    @Override
     public void setContains(Entity item) {
         this.contains.add(item);
     }
 
+    @Override
     public void removeContents(int index) {
         this.contains.remove(index);
     }
+
 }
