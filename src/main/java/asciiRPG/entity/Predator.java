@@ -40,6 +40,7 @@ public class Predator extends Entity implements NPC {
         this.location.setY(y);
     }
 
+    @Override
     public Location getLocation() {
         return location;
     }
@@ -69,7 +70,7 @@ public class Predator extends Entity implements NPC {
         double thirstRoll = thirst / Math.random();
         double lowerRoll = Math.min(hungerRoll, thirstRoll);
         if (lowerRoll > 800) {
-            setDesire(hungerRoll > thirstRoll ? Desire.DRINK : Desire.EAT);
+            setDesire(hungerRoll > thirstRoll ? Desire.DRINK : Desire.SOCIALIZE);
         }
     }
 
@@ -127,6 +128,8 @@ public class Predator extends Entity implements NPC {
 
     @Override
     public void takeTurn() {
+        System.out.println(location.getX());
+
         setHunger(this.hunger + 1);
         setThirst(this.thirst + 4);
         if (currentDesire == Desire.SOCIALIZE) {
@@ -135,6 +138,7 @@ public class Predator extends Entity implements NPC {
             decideGoalForTurn();
         } else if (currentDesire == Desire.EAT) {
             // just for now
+            walkRandomly();
         } else if (currentDesire == Desire.DRINK) {
             this.glyph = 'T';
             findNearbyWater();
