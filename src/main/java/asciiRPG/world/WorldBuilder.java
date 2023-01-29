@@ -5,6 +5,7 @@ import asciiRPG.entity.Predator;
 import asciiRPG.tiles.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class WorldBuilder {
     private int width;
@@ -45,6 +46,7 @@ public class WorldBuilder {
                 }
             }
         }
+        System.out.println(Collections.unmodifiableList(entities).size());
         return this;
     }
 

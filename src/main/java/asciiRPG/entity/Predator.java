@@ -65,24 +65,37 @@ public class Predator extends Entity implements NPC {
         return this.health;
     }
 
+    void setHealth(int health) {
+        this.health = health;
+    }
+
     private void decideGoalForTurn() {
         double hungerRoll = hunger / Math.random();
         double thirstRoll = thirst / Math.random();
         double lowerRoll = Math.min(hungerRoll, thirstRoll);
-        if (lowerRoll > 800) {
-            setDesire(hungerRoll > thirstRoll ? Desire.DRINK : Desire.SOCIALIZE);
+        if (lowerRoll > 1600) {
+            this.setDesire(hungerRoll > thirstRoll ? Desire.DRINK : Desire.SOCIALIZE);
         }
     }
 
     Random rand = new Random();
     private void walkRandomly() {
         int roll = rand.nextInt((10 - 1) + 1) + 1;
-        if (getLocation().getX() > 1 && getLocation().getY() > 1) {
+        if (this.getLocation().getX() > 2 && this.getLocation().getY() > 2 && this.getLocation().getX() < 499 && this.getLocation().getY() < 499) {
             switch (roll) {
-                case 1 -> goEast();
-                case 2 -> goWest();
-                case 3 -> goNorth();
-                case 4 -> goSouth();
+                case 1 -> this.goEast();
+                case 2 -> this.goWest();
+                case 3 -> this.goNorth();
+                case 4 -> this.goSouth();
+                default -> {
+                }
+            }
+        } else {
+            switch (this.lastDirection) {
+                case "East" -> this.goWest();
+                case "West" -> this.goEast();
+                case "North" -> this.goSouth();
+                case "South" -> this.goNorth();
                 default -> {
                 }
             }
@@ -94,42 +107,54 @@ public class Predator extends Entity implements NPC {
             if (lastTileSeed > this.tile.getSeed()) {
                 walkRandomly();
             } else {
-                switch (this.lastDirection) {
-                    case "East" -> goEast();
-                    case "West" -> goWest();
-                    case "North" -> goNorth();
-                    case "South" -> goSouth();
-                    default -> walkRandomly();
+                if (this.getLocation().getX() > 2 && this.getLocation().getY() > 2 && this.getLocation().getX() < 499 && this.getLocation().getY() < 499) {
+                    switch (this.lastDirection) {
+                        case "East" -> this.goEast();
+                        case "West" -> this.goWest();
+                        case "North" -> this.goNorth();
+                        case "South" -> this.goSouth();
+                        default -> this.walkRandomly();
+                    }
+                } else {
+                    switch (this.lastDirection) {
+                        case "East" -> this.goWest();
+                        case "West" -> this.goEast();
+                        case "North" -> this.goSouth();
+                        case "South" -> this.goNorth();
+                        default -> {
+                        }
+                    }
                 }
             }
         } else {
-            this.setThirst(this.thirst - 50);
+            this.setThirst(0);
+            this.setHealth(1000);
             this.setDesire(Desire.SOCIALIZE);
         }
     }
 
     private void goEast() {
-        setLocation(getLocation().getX() + 1, getLocation().getY());
+        setLocation(this.getLocation().getX() + 1, this.getLocation().getY());
         this.lastDirection = "East";
     }
 
     private void goWest() {
-        setLocation(getLocation().getX() - 1, getLocation().getY());
+        setLocation(this.getLocation().getX() - 1, this.getLocation().getY());
         this.lastDirection = "West";
     }
     private void goNorth() {
-        setLocation(getLocation().getX(), getLocation().getY() + 1);
+        setLocation(this.getLocation().getX(), this.getLocation().getY() + 1);
         this.lastDirection = "North";
     }
     private void goSouth() {
-        setLocation(getLocation().getX(), getLocation().getY() - 1);
+        setLocation(this.getLocation().getX(), this.getLocation().getY() - 1);
         this.lastDirection = "South";
     }
 
     @Override
     public void takeTurn() {
-        System.out.println(location.getX());
-
+        System.out.println(this.health);
+        if (this.health <= 0) { this.glyph = 'X'; return; }
         setHunger(this.hunger + 1);
         setThirst(this.thirst + 4);
         if (currentDesire == Desire.SOCIALIZE) {
@@ -137,11 +162,14 @@ public class Predator extends Entity implements NPC {
             walkRandomly();
             decideGoalForTurn();
         } else if (currentDesire == Desire.EAT) {
-            // just for now
+            this.glyph = 'E';
             walkRandomly();
         } else if (currentDesire == Desire.DRINK) {
             this.glyph = 'T';
+            setHealth(this.health - 5);
             findNearbyWater();
+        } else {
+            this.glyph = '?';
         }
     }
 
@@ -169,11 +197,11 @@ public class Predator extends Entity implements NPC {
         }
 
         public int getX() {
-            return x;
+            return this.x;
         }
 
         public int getY() {
-            return y;
+            return this.y;
         }
     }
 }

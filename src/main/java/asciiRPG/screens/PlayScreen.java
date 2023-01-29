@@ -66,14 +66,17 @@ public class PlayScreen implements Screen {
         terminal.write((char) 0xE2 + " " + "[-----]", screenWidth + 1, 7);
         terminal.write((char) 0xE3 + " " + "[-----]", screenWidth + 1, 8);
 
-        terminal.write(getTileInfoString(world.getTiles()[centerX][centerY]), screenWidth + 1, 10, world.getTiles()[centerX][centerY].getColor());
+        terminal.write(
+                getTileInfoString(world.getTiles()[centerX][centerY]),
+                screenWidth + 1,
+                10,
+                world.getTiles()[centerX][centerY].getColor()
+        );
 
     }
 
     private void displayCreatures(AsciiPanel terminal, int wx, int wy, int x, int y, int left, int top) {
         Entity creature = world.getTiles()[wx][wy].getContains().get(0);
-        // remove the creature from the previous tile
-        world.getTiles()[wx][wy].removeContents(creature);
         // overwrite the old tile with the basic glyph
         terminal.write(world.getGlyph(wx, wy), x, y, world.getColor(wx, wy));
 
@@ -87,6 +90,8 @@ public class PlayScreen implements Screen {
         }
         // TODO : this is where the error logs are coming from bc its trying to draw off-screen.
         if (isInWindowBounds(newX - left, newY - top)) terminal.write(creature.getGlyph(), newX - left, newY - top);
+        // remove the creature from the previous tile
+        world.getTiles()[wx][wy].removeContents(creature);
     }
 
     private boolean isInWorldBounds(int x, int y) {
@@ -103,6 +108,12 @@ public class PlayScreen implements Screen {
                 int wx = x + left;
                 int wy = y + top;
                 terminal.write(world.getGlyph(wx, wy), x, y, world.getColor(wx, wy));
+            }
+        }
+        for (int x = 0; x < screenWidth; x++) {
+            for (int y = 0; y < screenHeight; y++) {
+                int wx = x + left;
+                int wy = y + top;
                 if (world.getTiles()[wx][wy].getContains().size() != 0) {
                     // there is NO WAY this needs that many arguments, jesus.
                     displayCreatures(terminal, wx, wy, x, y, left, top);
